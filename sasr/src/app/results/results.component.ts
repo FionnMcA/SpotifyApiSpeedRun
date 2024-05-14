@@ -91,7 +91,7 @@ export class ResultsComponent implements OnInit {
       })
       .subscribe({
         next: (data: any) => {
-          this.trackUris = data.items.uri;
+          this.trackUris = data.items.map((item: any) => item.uri);
           console.log('Top Tracks:', data.items);
           this.tracks = data.items.slice(0, 5);
         },
