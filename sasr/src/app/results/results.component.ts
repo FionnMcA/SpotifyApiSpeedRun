@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 export class ResultsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
   tracks: any[] = [];
+  artists: any[] = [];
 
   ngOnInit(): void {
     this.HandleHash();
@@ -39,11 +40,28 @@ export class ResultsComponent implements OnInit {
     return { access_token, refress_token };
   }
 
+  getTopArtists(): void {
+    const accessToken = localStorage.getItem('accessToken');
+    const url = `https://api.spotify.com/v1/me/top/artists?limit=5&time_range=long_term`;
+
+    this.http
+      .get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .subscribe({
+        next: (data: any) => {
+          this.artists = data.items;
+        },
+        error: (error) => {
+          console.log('error fetching top artists ', this.artists);
+        },
+      });
+  }
+
   getTopTracks(): void {
     const accessToken = localStorage.getItem('accessToken');
-
     const timePeriod = 'long_term';
-    const url = `https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${timePeriod}`;
+    const url = `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=${timePeriod}`;
 
     this.http
       .get(url, {
