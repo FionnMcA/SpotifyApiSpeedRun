@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { URLSearchParams } from 'url';
+
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
