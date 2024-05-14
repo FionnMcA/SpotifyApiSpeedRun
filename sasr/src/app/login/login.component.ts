@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 })
 export class LoginComponent {
   login() {
-    window.location.href = 'http://localhost:8989/api/login';
+    window.location.href =
+      'https://spotify-api-speed-run-9b86.vercel.app/api/login';
   }
 }
