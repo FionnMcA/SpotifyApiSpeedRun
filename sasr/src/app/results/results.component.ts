@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { URLSearchParams } from 'url';
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
@@ -11,25 +12,33 @@ export class ResultsComponent implements OnInit {
   tracks: any[] = [];
 
   ngOnInit(): void {
-    this.route.fragment.subscribe((fragment) => {
-      if (fragment) {
-        const tokens = this.parseFragment(fragment);
-        if (tokens.access_token && tokens.refresh_token) {
-          localStorage.setItem('accessToken', tokens.access_token);
-          localStorage.setItem('refreshToken', tokens.refresh_token);
-        }
-      }
-    });
+    this.HandleHash();
     this.getTopTracks();
   }
 
-  private parseFragment(fragment: string): any {
-    return fragment.split('&').reduce((acc, part) => {
-      const item = part.split('=');
-      acc[item[0]] = decodeURIComponent(item[1]);
-      return acc;
-    }, {});
+  HandleHash() {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const tokens = this.parseFragment(hash);
+      if (tokens.access_token && tokens.refresh_token) {
+        localStorage.setItem('accessToken', tokens.access_token);
+        localStorage.setItem('refreshToken', tokens.refresh_token);
+      }
+      history.replaceState(
+        null,
+        null,
+        window.location.pathname + window.location.search
+      );
+    }
   }
+
+  private parseFragment(fragment: string): any {
+    const params = new URLSearchParams(fragment);
+    const access_token = params.get('access_token');
+    const refress_token = params.get('refresh_token');
+    return { access_token, refress_token };
+  }
+
   getTopTracks(): void {
     const accessToken = localStorage.getItem('accessToken');
 
