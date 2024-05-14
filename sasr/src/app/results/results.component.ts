@@ -40,8 +40,8 @@ export class ResultsComponent implements OnInit {
     if (hash) {
       const tokens = this.parseFragment(hash);
       if (tokens.access_token && tokens.refresh_token) {
-        localStorage.setItem('accessToken', tokens.access_token);
-        localStorage.setItem('refreshToken', tokens.refresh_token);
+        sessionStorage.setItem('accessToken', tokens.access_token);
+        sessionStorage.setItem('refreshToken', tokens.refresh_token);
       }
       history.replaceState(
         null,
@@ -59,7 +59,7 @@ export class ResultsComponent implements OnInit {
   }
 
   getTopArtists(): void {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = sessionStorage.getItem('accessToken');
     const url = `https://api.spotify.com/v1/me/top/artists?limit=5&time_range=${this.timePeriod}`;
 
     this.http
@@ -77,7 +77,7 @@ export class ResultsComponent implements OnInit {
   }
 
   getTopTracks(): void {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = sessionStorage.getItem('accessToken');
     const url = `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=${this.timePeriod}`;
 
     this.http
