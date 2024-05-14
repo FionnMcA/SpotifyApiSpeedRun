@@ -54,8 +54,8 @@ export class ResultsComponent implements OnInit {
   private parseFragment(fragment: string): any {
     const params = new URLSearchParams(fragment);
     const access_token = params.get('access_token');
-    const refress_token = params.get('refresh_token');
-    return { access_token, refress_token };
+    const refresh_token = params.get('refresh_token');
+    return { access_token, refresh_token };
   }
 
   getTopArtists(): void {

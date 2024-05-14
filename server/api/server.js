@@ -72,16 +72,6 @@ app.get("/api/callback", (req, res) => {
       .then((response) => {
         const { access_token, refresh_token, expires_in } = response.data;
 
-        //Testing cookies
-        res.cookie("accessToken", access_token, {
-          httpOnly: true,
-          secure: true,
-        });
-        res.cookie("refreshToken", refresh_token, {
-          httpOnly: true,
-          secure: true,
-        });
-
         const serializedTokens = querystring.stringify({
           access_token: access_token,
           refresh_token: refresh_token,
