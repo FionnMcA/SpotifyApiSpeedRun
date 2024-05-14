@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { app } from '../../../server';
+import { response } from 'express';
+import { Observable } from 'rxjs';
+import { platform } from 'os';
 
 @Component({
   selector: 'app-results',
@@ -9,16 +13,16 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ResultsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  trackUris: any[] = [];
   tracks: any[] = [];
   artists: any[] = [];
   timePeriod = 'long_term';
-  userId: any;
+  user: any;
 
   ngOnInit(): void {
     this.HandleHash();
     this.getTopTracks();
     this.getTopArtists();
-    this.getProfile();
   }
 
   on4Weeks() {
@@ -81,13 +85,13 @@ export class ResultsComponent implements OnInit {
   getTopTracks(): void {
     const accessToken = sessionStorage.getItem('accessToken');
     const url = `https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${this.timePeriod}`;
-
     this.http
       .get(url, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .subscribe({
         next: (data: any) => {
+          this.trackUris = data.items.uri;
           console.log('Top Tracks:', data.items);
           this.tracks = data.items.slice(0, 5);
         },
@@ -97,21 +101,69 @@ export class ResultsComponent implements OnInit {
       });
   }
 
-  getProfile() {
+  onCreatePlaylist() {
+    const description = this.timePeriod;
+    const name = `Your top tracks of ${this.timePeriod}`;
     const accessToken = sessionStorage.getItem('accessToken');
+    this.getProfile(accessToken).subscribe({
+      next: (userProfile) => {
+        const userId = userProfile.id;
+        this.createEmptyPlaylist(
+          accessToken,
+          userId,
+          name,
+          description
+        ).subscribe({
+          next: (playlist) => {
+            const playlistId = playlist.id;
+            this.addTracksToPlaylist(accessToken, playlistId, this.trackUris);
+          },
+          error: (error) => {
+            console.error('Error creating playlist ', error);
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Error getting profile ', error);
+      },
+    });
+  }
+
+  getProfile(accessToken): Observable<any> {
     const url = 'https://api.spotify.com/v1/me';
-    this.http
-      .get(url, {
+    return this.http.get(url, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  }
+
+  createEmptyPlaylist(accessToken, userId, name, description): Observable<any> {
+    const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+    return this.http.post(
+      url,
+      {
+        name: name,
+        description: description,
+        public: true,
+      },
+      {
         headers: { Authorization: `Bearer ${accessToken}` },
-      })
+      }
+    );
+  }
+
+  addTracksToPlaylist(accessToken, playlistId, trackUris) {
+    const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+
+    this.http
+      .post(
+        url,
+        { uris: trackUris },
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
       .subscribe({
-        next: (data: any) => {
-          this.userId = data.id;
-          console.log('UserId ' + this.userId);
-        },
-        error: (error) => {
-          console.error('error geting user profile ', error);
-        },
+        next: (response) =>
+          console.log('Tracks added successfully ' + response),
+        error: (error) => console.error('error adding tracks ' + error),
       });
   }
 }
