@@ -11,9 +11,26 @@ export class ResultsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
   tracks: any[] = [];
   artists: any[] = [];
+  timePeriod = 'long_term';
 
   ngOnInit(): void {
     this.HandleHash();
+    this.getTopTracks();
+    this.getTopArtists();
+  }
+
+  on4Weeks() {
+    this.timePeriod = 'short_term';
+    this.getTopTracks();
+    this.getTopArtists();
+  }
+  on6Months() {
+    this.timePeriod = 'medium_term';
+    this.getTopTracks();
+    this.getTopArtists();
+  }
+  on1Year() {
+    this.timePeriod = 'long_term';
     this.getTopTracks();
     this.getTopArtists();
   }
@@ -43,7 +60,7 @@ export class ResultsComponent implements OnInit {
 
   getTopArtists(): void {
     const accessToken = localStorage.getItem('accessToken');
-    const url = `https://api.spotify.com/v1/me/top/artists?limit=5&time_range=long_term`;
+    const url = `https://api.spotify.com/v1/me/top/artists?limit=5&time_range=${this.timePeriod}`;
 
     this.http
       .get(url, {
@@ -61,8 +78,7 @@ export class ResultsComponent implements OnInit {
 
   getTopTracks(): void {
     const accessToken = localStorage.getItem('accessToken');
-    const timePeriod = 'long_term';
-    const url = `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=${timePeriod}`;
+    const url = `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=${this.timePeriod}`;
 
     this.http
       .get(url, {

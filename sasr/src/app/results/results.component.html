@@ -1,4 +1,7 @@
 <p>results works!</p>
+<button (click)="on4Weeks()">4 weeks</button>
+<button (click)="on6Months()">6 months</button>
+<button (click)="on1Year()">1 year</button>
 <h1>Tracks</h1>
 <ul *ngFor="let track of tracks">
   <li>{{ track.name }}</li>
