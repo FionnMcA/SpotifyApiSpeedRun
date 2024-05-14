@@ -15,6 +15,7 @@ export class ResultsComponent implements OnInit {
   ngOnInit(): void {
     this.HandleHash();
     this.getTopTracks();
+    this.getTopArtists();
   }
 
   HandleHash() {
