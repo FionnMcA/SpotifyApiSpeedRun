@@ -98,7 +98,7 @@ export class ResultsComponent implements OnInit {
   }
 
   getProfile() {
-    const accessToken = sessionStorage.getItem('access_token');
+    const accessToken = sessionStorage.getItem('accessToken');
     const url = 'https://api.spotify.com/v1/me';
     this.http
       .get(url, {
