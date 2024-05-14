@@ -98,15 +98,15 @@ export class ResultsComponent implements OnInit {
   }
 
   getProfile() {
-    const access_token = sessionStorage.getItem('access_token');
+    const accessToken = sessionStorage.getItem('access_token');
     const url = 'https://api.spotify.com/v1/me';
     this.http
       .get(url, {
-        headers: { Authorization: `Bearer ${access_token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
       .subscribe({
         next: (data: any) => {
-          this.userId = data.items.id;
+          this.userId = data.id;
           console.log('UserId ' + this.userId);
         },
         error: (error) => {
