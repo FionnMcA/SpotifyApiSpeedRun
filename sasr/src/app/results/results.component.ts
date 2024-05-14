@@ -12,11 +12,13 @@ export class ResultsComponent implements OnInit {
   tracks: any[] = [];
   artists: any[] = [];
   timePeriod = 'long_term';
+  userId: any;
 
   ngOnInit(): void {
     this.HandleHash();
     this.getTopTracks();
     this.getTopArtists();
+    this.getProfile();
   }
 
   on4Weeks() {
@@ -60,7 +62,7 @@ export class ResultsComponent implements OnInit {
 
   getTopArtists(): void {
     const accessToken = sessionStorage.getItem('accessToken');
-    const url = `https://api.spotify.com/v1/me/top/artists?limit=5&time_range=${this.timePeriod}`;
+    const url = `https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${this.timePeriod}`;
 
     this.http
       .get(url, {
@@ -68,7 +70,7 @@ export class ResultsComponent implements OnInit {
       })
       .subscribe({
         next: (data: any) => {
-          this.artists = data.items;
+          this.artists = data.items.slice(0, 5);
         },
         error: (error) => {
           console.log('error fetching top artists ', this.artists);
@@ -78,7 +80,7 @@ export class ResultsComponent implements OnInit {
 
   getTopTracks(): void {
     const accessToken = sessionStorage.getItem('accessToken');
-    const url = `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=${this.timePeriod}`;
+    const url = `https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${this.timePeriod}`;
 
     this.http
       .get(url, {
@@ -87,10 +89,28 @@ export class ResultsComponent implements OnInit {
       .subscribe({
         next: (data: any) => {
           console.log('Top Tracks:', data.items);
-          this.tracks = data.items;
+          this.tracks = data.items.slice(0, 5);
         },
         error: (error) => {
           console.error('Error fetching top tracks:', error);
+        },
+      });
+  }
+
+  getProfile() {
+    const access_token = sessionStorage.getItem('access_token');
+    const url = 'https://api.spotify.com/v1/me';
+    this.http
+      .get(url, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      })
+      .subscribe({
+        next: (data: any) => {
+          this.userId = data.items.id;
+          console.log('UserId ' + this.userId);
+        },
+        error: (error) => {
+          console.error('error geting user profile ', error);
         },
       });
   }
