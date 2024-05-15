@@ -5,6 +5,7 @@ import { app } from '../../../server';
 import { response } from 'express';
 import { Observable } from 'rxjs';
 import { platform } from 'os';
+import { AuthServiceService } from '../auth-service.service';
 
 @Component({
   selector: 'app-results',
@@ -12,7 +13,11 @@ import { platform } from 'os';
   styleUrls: ['./results.component.css'], // Changed to 'styleUrls' and is an array
 })
 export class ResultsComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private authService: AuthServiceService
+  ) {}
   trackUris: any[] = [];
   tracks: any[] = [];
   artists: any[] = [];
@@ -21,7 +26,7 @@ export class ResultsComponent implements OnInit {
   expirationTime = 3600 * 1000;
 
   ngOnInit(): void {
-    this.HandleHash();
+    this.authService.HandleHash();
     this.getTopTracks();
     this.getTopArtists();
   }
