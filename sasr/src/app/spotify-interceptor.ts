@@ -6,19 +6,18 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Observable, observable } from 'rxjs';
+import { AuthServiceService } from './auth-service.service';
 
 @Injectable()
 export class SpotifyInterceptor implements HttpInterceptor {
-  accessToken = sessionStorage.getItem('accessToken');
+  constructor(private authService: AuthServiceService) {}
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const accessToken = this.authService.getAccessToken();
     const requestWithToken = request.clone({
-      headers: request.headers.set(
-        'Authorization',
-        `Bearer ${this.accessToken}`
-      ),
+      headers: request.headers.set('Authorization', `Bearer ${accessToken}`),
     });
     return next.handle(requestWithToken);
   }
