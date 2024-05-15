@@ -18,6 +18,7 @@ export class ResultsComponent implements OnInit {
   artists: any[] = [];
   timePeriod = 'long_term';
   user: any;
+  expirationTime = 3600 * 1000;
 
   ngOnInit(): void {
     this.HandleHash();
@@ -48,6 +49,14 @@ export class ResultsComponent implements OnInit {
       if (tokens.access_token && tokens.refresh_token) {
         sessionStorage.setItem('accessToken', tokens.access_token);
         sessionStorage.setItem('refreshToken', tokens.refresh_token);
+        const expirationTimestamp = new Date(
+          Date.now() + this.expirationTime
+        ).getTime();
+        sessionStorage.setItem(
+          'spotifyAccessTokenExpirationTimestamp',
+          expirationTimestamp.toString()
+        );
+        console.log('expirationTimestamp ' + expirationTimestamp);
       }
       history.replaceState(
         null,
@@ -55,6 +64,19 @@ export class ResultsComponent implements OnInit {
         window.location.pathname + window.location.search
       );
     }
+  }
+
+  getExpirationTimestamp(): number {
+    const timestamp = sessionStorage.getItem(
+      'spotifyAccessTokenExpirationTimestamp'
+    );
+    return timestamp ? parseInt(timestamp, 10) : 0;
+  }
+
+  hasTokenExpired(): boolean {
+    const currentTime = Date.now();
+    const expirationTimestamp = this.getExpirationTimestamp();
+    return currentTime > expirationTimestamp;
   }
 
   private parseFragment(fragment: string): any {
@@ -65,58 +87,43 @@ export class ResultsComponent implements OnInit {
   }
 
   getTopArtists(): void {
-    const accessToken = sessionStorage.getItem('accessToken');
     const url = `https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${this.timePeriod}`;
 
-    this.http
-      .get(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .subscribe({
-        next: (data: any) => {
-          this.artists = data.items.slice(0, 5);
-        },
-        error: (error) => {
-          console.log('error fetching top artists ', this.artists);
-        },
-      });
+    this.http.get(url, {}).subscribe({
+      next: (data: any) => {
+        this.artists = data.items.slice(0, 5);
+      },
+      error: (error) => {
+        console.log('error fetching top artists ', this.artists);
+      },
+    });
   }
 
   getTopTracks(): void {
-    const accessToken = sessionStorage.getItem('accessToken');
     const url = `https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${this.timePeriod}`;
-    this.http
-      .get(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .subscribe({
-        next: (data: any) => {
-          this.trackUris = data.items.map((item: any) => item.uri);
-          console.log('Top Tracks:', data.items);
-          this.tracks = data.items.slice(0, 5);
-        },
-        error: (error) => {
-          console.error('Error fetching top tracks:', error);
-        },
-      });
+    this.http.get(url, {}).subscribe({
+      next: (data: any) => {
+        this.trackUris = data.items.map((item: any) => item.uri);
+        console.log('Top Tracks:', data.items);
+        this.tracks = data.items.slice(0, 5);
+      },
+      error: (error) => {
+        console.error('Error fetching top tracks:', error);
+      },
+    });
   }
 
   onCreatePlaylist() {
     const description = this.timePeriod;
     const name = `Your top tracks of ${this.timePeriod}`;
     const accessToken = sessionStorage.getItem('accessToken');
-    this.getProfile(accessToken).subscribe({
+    this.getProfile().subscribe({
       next: (userProfile) => {
         const userId = userProfile.id;
-        this.createEmptyPlaylist(
-          accessToken,
-          userId,
-          name,
-          description
-        ).subscribe({
+        this.createEmptyPlaylist(userId, name, description).subscribe({
           next: (playlist) => {
             const playlistId = playlist.id;
-            this.addTracksToPlaylist(accessToken, playlistId, this.trackUris);
+            this.addTracksToPlaylist(playlistId, this.trackUris);
           },
           error: (error) => {
             console.error('Error creating playlist ', error);
@@ -129,41 +136,25 @@ export class ResultsComponent implements OnInit {
     });
   }
 
-  getProfile(accessToken): Observable<any> {
+  getProfile(): Observable<any> {
     const url = 'https://api.spotify.com/v1/me';
-    return this.http.get(url, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+    return this.http.get(url, {});
+  }
+
+  createEmptyPlaylist(userId, name, description): Observable<any> {
+    const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+    return this.http.post(url, {
+      name: name,
+      description: description,
+      public: true,
     });
   }
 
-  createEmptyPlaylist(accessToken, userId, name, description): Observable<any> {
-    const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
-    return this.http.post(
-      url,
-      {
-        name: name,
-        description: description,
-        public: true,
-      },
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-  }
-
-  addTracksToPlaylist(accessToken, playlistId, trackUris) {
+  addTracksToPlaylist(playlistId, trackUris) {
     const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-
-    this.http
-      .post(
-        url,
-        { uris: trackUris },
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      )
-      .subscribe({
-        next: (response) =>
-          console.log('Tracks added successfully ' + response),
-        error: (error) => console.error('error adding tracks ' + error),
-      });
+    this.http.post(url, { uris: trackUris }, {}).subscribe({
+      next: (response) => console.log('Tracks added successfully ' + response),
+      error: (error) => console.error('error adding tracks ' + error),
+    });
   }
 }
