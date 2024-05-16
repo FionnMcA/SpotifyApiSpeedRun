@@ -15,8 +15,6 @@ interface TokenResponse {
 export class AuthServiceService {
   constructor(private http: HttpClient, private router: Router) {}
 
-  expirationTime = 3600 * 1000;
-
   refreshAccessToken(refreshToken: string): Observable<any> {
     return this.http.get(
       `https://spotify-api-speed-run-9b86.vercel.app/refresh_token?refresh_token=${refreshToken}`
@@ -24,11 +22,15 @@ export class AuthServiceService {
   }
 
   getAccessToken() {
-    if (this.hasTokenExpired()) {
+    const accessToken = sessionStorage.getItem('accessToken');
+    const expired = this.hasTokenExpired();
+
+    if (expired) {
+      console.log('Access token expired. Attempting to refresh.');
       this.handleTokenRefresh();
     }
-    const access_token = sessionStorage.getItem('accessToken');
-    return access_token;
+
+    return accessToken;
   }
 
   handleTokenRefresh() {
@@ -44,7 +46,8 @@ export class AuthServiceService {
         if (data.access_token && data.refresh_token) {
           this.setSessionTokens(data);
         } else {
-          console.error('Invalid token response ', data);
+          console.error('Invalid token response:', data);
+          this.router.navigate(['/']);
         }
       },
       error: (error) => {
@@ -54,14 +57,14 @@ export class AuthServiceService {
     });
   }
 
-  HandleHash() {
+  handleHash() {
     const hash = window.location.hash.substring(1);
     if (hash) {
       const tokens = this.parseFragment(hash);
       if (tokens.access_token && tokens.refresh_token) {
         this.setSessionTokens(tokens);
       } else {
-        console.error('Invalid token fragments ', hash);
+        console.error('Invalid token fragments:', hash);
       }
       history.replaceState(
         null,
@@ -81,7 +84,7 @@ export class AuthServiceService {
   hasTokenExpired(): boolean {
     const currentTime = Date.now();
     const expirationTimestamp = this.getExpirationTimestamp();
-    const fiveMinutesInMs = 300000;
+    const fiveMinutesInMs = 300000; // 5 minutes buffer
     const expired = currentTime + fiveMinutesInMs > expirationTimestamp;
     console.log(`Token expired: ${expired}`);
     return expired;
@@ -100,6 +103,7 @@ export class AuthServiceService {
       expirationTimestamp
     );
   }
+
   private parseFragment(fragment: string): TokenResponse {
     const params = new URLSearchParams(fragment);
     const access_token = params.get('access_token') || '';
