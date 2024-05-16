@@ -21,13 +21,14 @@ export class AuthServiceService {
     );
   }
 
-  getAccessToken() {
+  getAccessToken(): string | null {
     const accessToken = sessionStorage.getItem('accessToken');
     const expired = this.hasTokenExpired();
 
     if (expired) {
       console.log('Access token expired. Attempting to refresh.');
       this.handleTokenRefresh();
+      return null; // Return null while refreshing to prevent usage of expired token
     }
 
     return accessToken;
