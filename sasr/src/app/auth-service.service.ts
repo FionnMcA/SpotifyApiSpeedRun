@@ -41,10 +41,15 @@ export class AuthServiceService {
 
     this.refreshAccessToken(refreshToken).subscribe({
       next: (data) => {
-        this.setSessionTokens(data);
+        if (data.access_token && data.refresh_token) {
+          this.setSessionTokens(data);
+        } else {
+          console.error('Invalid token response ', data);
+        }
       },
       error: (error) => {
         console.error('Error refreshing token:', error);
+        this.router.navigate(['/']);
       },
     });
   }
@@ -53,7 +58,11 @@ export class AuthServiceService {
     const hash = window.location.hash.substring(1);
     if (hash) {
       const tokens = this.parseFragment(hash);
-      this.setSessionTokens(tokens);
+      if (tokens.access_token && tokens.refresh_token) {
+        this.setSessionTokens(tokens);
+      } else {
+        console.error('Invalid token fragments ', hash);
+      }
       history.replaceState(
         null,
         null,
@@ -73,22 +82,24 @@ export class AuthServiceService {
     const currentTime = Date.now();
     const expirationTimestamp = this.getExpirationTimestamp();
     const fiveMinutesInMs = 300000;
-    return currentTime + fiveMinutesInMs > expirationTimestamp;
+    const expired = currentTime + fiveMinutesInMs > expirationTimestamp;
+    console.log(`Token expired: ${expired}`);
+    return expired;
   }
 
   private setSessionTokens(tokens: TokenResponse): void {
     sessionStorage.setItem('accessToken', tokens.access_token);
     sessionStorage.setItem('refreshToken', tokens.refresh_token);
-    const expirationTimestamp = new Date(
-      Date.now() + this.expirationTime
-    ).getTime();
+    const expirationTimestamp = Date.now() + tokens.expires_in * 1000;
     sessionStorage.setItem(
       'spotifyAccessTokenExpirationTimestamp',
       expirationTimestamp.toString()
     );
-    console.log('expirationTimestamp ' + expirationTimestamp);
+    console.log(
+      'Access token and refresh token set. Expiration timestamp:',
+      expirationTimestamp
+    );
   }
-
   private parseFragment(fragment: string): TokenResponse {
     const params = new URLSearchParams(fragment);
     const access_token = params.get('access_token') || '';
