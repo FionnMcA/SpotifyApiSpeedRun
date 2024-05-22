@@ -79,7 +79,7 @@ export class ResultsComponent implements OnInit {
 
     this.http.get(url, {}).subscribe({
       next: (data: any) => {
-        this.topArtistImg = data[0].images[0].url;
+        this.topArtistImg = data.items[0].images[0].url;
         this.artists = data.items.slice(0, 5);
       },
       error: (error) => {
