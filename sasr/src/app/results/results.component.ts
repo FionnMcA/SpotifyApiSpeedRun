@@ -19,7 +19,10 @@ export class ResultsComponent implements OnInit {
   loading: boolean = true;
   items: MenuItem[] | undefined;
   activeItem: MenuItem | undefined;
+  playlistUrl: string;
+  isClicked = false;
   colours: string[] = ['green', 'red', 'blue', 'orange'];
+  playlistString = 'Create Playlist';
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -88,25 +91,34 @@ export class ResultsComponent implements OnInit {
   }
 
   onCreatePlaylist() {
-    const description = this.timePeriod;
-    const name = `Your top tracks of ${this.timePeriod}`;
-    this.getProfile().subscribe({
-      next: (userProfile) => {
-        const userId = userProfile.id;
-        this.createEmptyPlaylist(userId, name, description).subscribe({
-          next: (playlist) => {
-            const playlistId = playlist.id;
-            this.addTracksToPlaylist(playlistId, this.trackUris);
-          },
-          error: (error) => {
-            console.error('Error creating playlist ', error);
-          },
-        });
-      },
-      error: (error) => {
-        console.error('Error getting profile ', error);
-      },
-    });
+    if (this.playlistString === 'Create Playlist') {
+      const description = this.timePeriod;
+      const name = `Your top tracks of ${this.timePeriod}`;
+      this.getProfile().subscribe({
+        next: (userProfile) => {
+          const userId = userProfile.id;
+          this.createEmptyPlaylist(userId, name, description).subscribe({
+            next: (playlist) => {
+              this.playlistUrl = playlist.external_urls.spotify;
+              this.playlistString = 'View Playlist';
+              this.isClicked = true;
+              const playlistId = playlist.id;
+              this.addTracksToPlaylist(playlistId, this.trackUris);
+            },
+            error: (error) => {
+              console.error('Error creating playlist ', error);
+            },
+          });
+        },
+        error: (error) => {
+          console.error('Error getting profile ', error);
+        },
+      });
+    } else {
+      this.isClicked = false;
+      this.playlistString = 'Create Playlist';
+      window.location.href = this.playlistUrl;
+    }
   }
 
   getProfile(): Observable<any> {

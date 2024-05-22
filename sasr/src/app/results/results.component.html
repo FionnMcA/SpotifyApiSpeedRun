@@ -15,82 +15,128 @@
   </div>
 </div>
 
-<p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
-<div #carousel class="carousel-container">
-  <p-carousel
-    [value]="colours"
-    [numVisible]="1.07"
-    [numScroll]="1"
-    [circular]="false"
-  >
-    <ng-template let-colour pTemplate="item">
-      <div
-        id="fullCard"
-        class="fullCard"
-        [ngStyle]="{
-          'background-image': 'url(/assets/' + colour + '.JPEG)'
-        }"
-      >
-        <div class="container">
-          <div class="timePeriod">
-            <span class="timePeriodSpan">
-              {{ timePeriodToString(timePeriod) }}</span
+<body *ngIf="!loading">
+  <div class="page">
+    <div class="grid">
+      <div class="md:col-3">
+        <div class="Ads"></div>
+      </div>
+      <div class="md:col-6 col-12">
+        <div class="content">
+          <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+          <div #carousel class="carousel-container">
+            <p-carousel
+              [value]="colours"
+              [numVisible]="1.07"
+              [numScroll]="1"
+              [circular]="false"
             >
+              <ng-template let-colour pTemplate="item">
+                <div
+                  id="fullCard"
+                  class="fullCard"
+                  [ngStyle]="{
+                    'background-image': 'url(/assets/' + colour + '.JPEG)'
+                  }"
+                >
+                  <div class="container">
+                    <div class="timePeriod">
+                      <span class="timePeriodSpan">
+                        {{ timePeriodToString(timePeriod) }}</span
+                      >
+                    </div>
+                    <div class="imgBox">
+                      <img
+                        class="imageCover"
+                        [src]="topArtistImg"
+                        alt="Top Artist Image"
+                      />
+                    </div>
+                    <table>
+                      <tr class="titles">
+                        <td>Top Artists</td>
+                        <td>Top Songs</td>
+                      </tr>
+                      <tr>
+                        <td class="topArtistsDisplay">
+                          <ul>
+                            <li *ngFor="let artist of artists; let i = index">
+                              {{ i + 1 }} {{ artist.name }}
+                            </li>
+                          </ul>
+                        </td>
+                        <td class="topArtistsDisplay">
+                          <ul>
+                            <li *ngFor="let track of tracks; let i = index">
+                              {{ i + 1 }} {{ track.name }}
+                            </li>
+                          </ul>
+                        </td>
+                      </tr>
+                      <tr class="additional-space">
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr class="titles">
+                        <td>Minutes Listened</td>
+                        <td>Top Genre</td>
+                      </tr>
+                      <tr class="minutesAndGenre">
+                        <td>{{ averageMinutes }}*</td>
+                        <td>{{ topGenre }}</td>
+                      </tr>
+                    </table>
+                    <div class="logoAndLink">WRAPPEDIFY.COM</div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-carousel>
           </div>
-          <div class="imgBox">
-            <img
-              class="imageCover"
-              [src]="topArtistImg"
-              alt="Top Artist Image"
-            />
+          <div style="text-align: center">
+            <div *ngIf="playlistLoading" class="inline-element">
+              <p-progressSpinner
+                styleClass="w-2rem h-2rem"
+                strokeWidth="4"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              ></p-progressSpinner>
+              <br />
+              Creating Playlist
+            </div>
+            <div *ngIf="!playlistLoading" class="inline-element">
+              <button
+                [ngStyle]="{
+                  'background-color': isClicked ? '#7DF9FF' : '',
+                  'border-color': isClicked ? '#7DF9FF' : ''
+                }"
+                pButton
+                (click)="onCreatePlaylist()"
+              >
+                {{ playlistString }}
+              </button>
+            </div>
+
+            <div class="theStar">
+              <p-panel class="p-panel-header" header="The *">
+                <p style="text-align: left">
+                  Spotify does not provide access to the total minutes a user
+                  spends listening. However, it does offer data on a user's 50
+                  most recently played tracks and the times at which they were
+                  played. From this, we can calculate the duration between the
+                  user's first and 50th track and calculate the total minutes
+                  spent listening. Thus, we can approximate how many minutes a
+                  user spends listening over periods of 4 weeks, 6 months, and 1
+                  year. <br /><br /><span class="tldr">TL;DR</span> Minutes
+                  Listened is an estimate.
+                </p>
+              </p-panel>
+            </div>
           </div>
-          <table>
-            <tr class="titles">
-              <td>Top Artists</td>
-              <td>Top Songs</td>
-            </tr>
-            <tr>
-              <td class="topArtistsDisplay">
-                <ul>
-                  <li *ngFor="let artist of artists; let i = index">
-                    {{ i + 1 }} {{ artist.name }}
-                  </li>
-                </ul>
-              </td>
-              <td class="topArtistsDisplay">
-                <ul>
-                  <li *ngFor="let track of tracks; let i = index">
-                    {{ i + 1 }} {{ track.name }}
-                  </li>
-                </ul>
-              </td>
-            </tr>
-            <tr class="additional-space">
-              <td></td>
-              <td></td>
-            </tr>
-            <tr class="titles">
-              <td>Minutes Listened</td>
-              <td>Top Genre</td>
-            </tr>
-            <tr class="minutesAndGenre">
-              <td>{{ averageMinutes }}*</td>
-              <td>{{ topGenre }}</td>
-            </tr>
-          </table>
-          <div class="logoAndLink">WRAPPEDIFY.COM</div>
+        </div>
+        <div class="md:col-3">
+          <div class="Ads"></div>
         </div>
       </div>
-    </ng-template>
-  </p-carousel>
-</div>
-
-<!-- <h1>Tracks</h1>
-<ul *ngFor="let track of tracks">
-  <li>{{ track.name }}</li>
-</ul>
-<h1>Artists</h1>
-<ul *ngFor="let artist of artists">
-  <li>{{ artist.name }}</li>
-</ul> -->
-<button (click)="onCreatePlaylist()">Create Playlist</button>
+    </div>
+  </div>
+</body>
