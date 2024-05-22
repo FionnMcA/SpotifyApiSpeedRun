@@ -49,6 +49,17 @@ export class ResultsComponent implements OnInit {
     this.activeItem = this.items[2];
   }
 
+  timePeriodToString(timePeriod: string): string {
+    switch (timePeriod) {
+      case 'short_term':
+        return '4 Weeks';
+      case 'medium_term':
+        return '6 Months';
+      case 'long_term':
+        return 'Year';
+    }
+  }
+
   ngOnInit(): void {
     this.authService.handleHash();
     this.getTopTracks();
