@@ -20,13 +20,13 @@ export class AuthGuardService implements CanActivate {
         if (token) {
           return of(true);
         } else {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/']);
           return of(false);
         }
       }),
       catchError((error) => {
         console.log('Error during token validation:', error);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
         return of(false);
       })
     );

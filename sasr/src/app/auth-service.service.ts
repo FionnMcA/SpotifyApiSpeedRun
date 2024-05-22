@@ -34,24 +34,28 @@ export class AuthServiceService {
   }
 
   getAccessToken(): Observable<string> {
-    if (!this.hasTokenExpired()) {
-      return of(sessionStorage.getItem('accessToken'));
+    const accessToken = sessionStorage.getItem('accessToken');
+    const isExpired = this.hasTokenExpired();
+
+    if (!isExpired && accessToken) {
+      return of(accessToken);
+    } else {
+      return this.handleTokenRefresh().pipe(
+        switchMap(() => of(sessionStorage.getItem('accessToken'))),
+        catchError((error) => {
+          console.log('Error during refresh ', error);
+          // this.router.navigate(['/']);
+          return of(null);
+        })
+      );
     }
-    return this.handleTokenRefresh().pipe(
-      switchMap(() => of(sessionStorage.getItem('accessToken'))),
-      catchError((error) => {
-        console.log('Error during refresh ', error);
-        this.router.navigate(['/']);
-        return of(null);
-      })
-    );
   }
 
   handleTokenRefresh(): Observable<any> {
     const refreshToken = sessionStorage.getItem('refreshToken');
     if (!refreshToken) {
       console.error('No refresh token available');
-      this.router.navigate(['/']);
+      // this.router.navigate(['/']);
       return of(null);
     }
 
@@ -61,12 +65,12 @@ export class AuthServiceService {
           this.setSessionTokens(data);
         } else {
           console.error('Invalid token response:', data);
-          this.router.navigate(['/']);
+          // this.router.navigate(['/']);
         }
       }),
       catchError((error) => {
         console.error('Error refreshing token:', error);
-        this.router.navigate(['/']);
+        // this.router.navigate(['/']);
         return of(null);
       })
     );
