@@ -26,7 +26,7 @@ export class ResultsComponent implements OnInit {
   expirationTime = 3600 * 1000;
 
   ngOnInit(): void {
-    this.authService.HandleHash();
+    this.authService.handleHash();
     this.getTopTracks();
     this.getTopArtists();
   }

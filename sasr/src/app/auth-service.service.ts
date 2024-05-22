@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { switchMap, catchError, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -21,41 +22,43 @@ export class AuthServiceService {
     );
   }
 
-  getAccessToken(): string | null {
-    const accessToken = sessionStorage.getItem('accessToken');
-    const expired = this.hasTokenExpired();
-
-    if (expired) {
-      console.log('Access token expired. Attempting to refresh.');
-      this.handleTokenRefresh();
-      return null; // Return null while refreshing to prevent usage of expired token
+  getAccessToken(): Observable<string> {
+    if (!this.hasTokenExpired()) {
+      return of(sessionStorage.getItem('accessToken'));
     }
-
-    return accessToken;
+    return this.handleTokenRefresh().pipe(
+      switchMap(() => of(sessionStorage.getItem('accessToken'))),
+      catchError((error) => {
+        console.log('Error during refresh ', error);
+        this.router.navigate(['/']);
+        return of(null);
+      })
+    );
   }
 
-  handleTokenRefresh() {
+  handleTokenRefresh(): Observable<any> {
     const refreshToken = sessionStorage.getItem('refreshToken');
     if (!refreshToken) {
       console.error('No refresh token available');
       this.router.navigate(['/']);
-      return;
+      return of(null); // Return an Observable that emits `null`
     }
 
-    this.refreshAccessToken(refreshToken).subscribe({
-      next: (data) => {
+    return this.refreshAccessToken(refreshToken).pipe(
+      tap((data) => {
         if (data.access_token && data.refresh_token) {
           this.setSessionTokens(data);
         } else {
           console.error('Invalid token response:', data);
           this.router.navigate(['/']);
         }
-      },
-      error: (error) => {
+      }),
+      catchError((error) => {
         console.error('Error refreshing token:', error);
         this.router.navigate(['/']);
-      },
-    });
+        return of(null); // Handle error by returning an Observable that emits `null`
+      })
+    );
   }
 
   handleHash() {
