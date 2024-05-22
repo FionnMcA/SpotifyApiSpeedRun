@@ -19,6 +19,7 @@ export class ResultsComponent implements OnInit {
   loading: boolean = true;
   items: MenuItem[] | undefined;
   activeItem: MenuItem | undefined;
+  colours: string[] = ['green', 'red', 'blue', 'orange'];
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,

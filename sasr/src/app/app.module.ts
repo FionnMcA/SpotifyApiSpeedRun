@@ -20,6 +20,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoginTextComponent } from './login/login-text/login-text.component';
 import { LoginImageFlicksComponent } from './login/login-image-flicks/login-image-flicks.component';
 import { CommonModule, DatePipe } from '@angular/common';
+import { PanelModule } from 'primeng/panel';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +38,7 @@ import { CommonModule, DatePipe } from '@angular/common';
     TabMenuModule,
     BrowserAnimationsModule,
     ProgressSpinnerModule,
+    PanelModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpotifyInterceptor, multi: true },

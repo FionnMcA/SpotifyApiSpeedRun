@@ -16,16 +16,81 @@
 </div>
 
 <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+<div #carousel class="carousel-container">
+  <p-carousel
+    [value]="colours"
+    [numVisible]="1.07"
+    [numScroll]="1"
+    [circular]="false"
+  >
+    <ng-template let-colour pTemplate="item">
+      <div
+        id="fullCard"
+        class="fullCard"
+        [ngStyle]="{
+          'background-image': 'url(/assets/' + colour + '.JPEG)'
+        }"
+      >
+        <div class="container">
+          <div class="timePeriod">
+            <span class="timePeriodSpan">
+              {{ timePeriodToString(timePeriod) }}</span
+            >
+          </div>
+          <div class="imgBox">
+            <img
+              class="imageCover"
+              [src]="topArtistImg"
+              alt="Top Artist Image"
+            />
+          </div>
+          <table>
+            <tr class="titles">
+              <td>Top Artists</td>
+              <td>Top Songs</td>
+            </tr>
+            <tr>
+              <td class="topArtistsDisplay">
+                <ul>
+                  <li *ngFor="let artist of artists; let i = index">
+                    {{ i + 1 }} {{ artist.name }}
+                  </li>
+                </ul>
+              </td>
+              <td class="topArtistsDisplay">
+                <ul>
+                  <li *ngFor="let track of tracks; let i = index">
+                    {{ i + 1 }} {{ track.name }}
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr class="additional-space">
+              <td></td>
+              <td></td>
+            </tr>
+            <tr class="titles">
+              <td>Minutes Listened</td>
+              <td>Top Genre</td>
+            </tr>
+            <tr class="minutesAndGenre">
+              <td>{{ averageMinutes }}*</td>
+              <td>{{ topGenre }}</td>
+            </tr>
+          </table>
+          <div class="logoAndLink">WRAPPEDIFY.COM</div>
+        </div>
+      </div>
+    </ng-template>
+  </p-carousel>
+</div>
 
-<!-- <button (click)="on4Weeks()">4 weeks</button>
-<button (click)="on6Months()">6 months</button>
-<button (click)="on1Year()">1 year</button> -->
-<h1>Tracks</h1>
+<!-- <h1>Tracks</h1>
 <ul *ngFor="let track of tracks">
   <li>{{ track.name }}</li>
 </ul>
 <h1>Artists</h1>
 <ul *ngFor="let artist of artists">
   <li>{{ artist.name }}</li>
-</ul>
+</ul> -->
 <button (click)="onCreatePlaylist()">Create Playlist</button>
