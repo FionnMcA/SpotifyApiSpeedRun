@@ -22,8 +22,9 @@ export class AuthGuardService implements CanActivate {
         this.router.navigate(['/login']);
         return false;
       }),
-      catchError(() => {
-        this.router.navigate(['/login']);
+      catchError((error) => {
+        console.log('Error during token validation:', error);
+        this.router.navigate(['/']);
         return of(false);
       })
     );
