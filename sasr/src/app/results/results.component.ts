@@ -1,25 +1,49 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthServiceService } from '../auth-service.service';
-
+import { MenuItem } from 'primeng/api';
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css'],
 })
 export class ResultsComponent implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private authService: AuthServiceService
-  ) {}
   trackUris: any[] = [];
   tracks: any[] = [];
   artists: any[] = [];
   timePeriod = 'long_term';
+  formattedDate: string;
   loading: boolean = true;
+  items: MenuItem[] | undefined;
+  activeItem: MenuItem | undefined;
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private authService: AuthServiceService,
+    private datePipe: DatePipe
+  ) {
+    this.formattedDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
+
+    console.log('FOrmatted date ' + this.formattedDate);
+    this.items = [
+      {
+        label: '4 weeks',
+        command: () => this.onChangeTimePeriod('short_term'),
+      },
+      {
+        label: '6 months',
+        command: () => this.onChangeTimePeriod('medium_term'),
+      },
+      {
+        label: 'All time',
+        command: () => this.onChangeTimePeriod('long_term'),
+      },
+    ];
+    this.activeItem = this.items[2];
+  }
 
   ngOnInit(): void {
     this.authService.handleHash();
@@ -27,18 +51,9 @@ export class ResultsComponent implements OnInit {
     this.getTopArtists();
   }
 
-  on4Weeks() {
-    this.timePeriod = 'short_term';
-    this.getTopTracks();
-    this.getTopArtists();
-  }
-  on6Months() {
-    this.timePeriod = 'medium_term';
-    this.getTopTracks();
-    this.getTopArtists();
-  }
-  on1Year() {
-    this.timePeriod = 'long_term';
+  onChangeTimePeriod(timePeriod: string): void {
+    this.timePeriod = timePeriod;
+    console.log('Time Period: ', this.timePeriod);
     this.getTopTracks();
     this.getTopArtists();
   }
