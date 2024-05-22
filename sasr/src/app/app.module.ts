@@ -19,6 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoginTextComponent } from './login/login-text/login-text.component';
 import { LoginImageFlicksComponent } from './login/login-image-flicks/login-image-flicks.component';
+import { CommonModule, DatePipe } from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,6 +40,7 @@ import { LoginImageFlicksComponent } from './login/login-image-flicks/login-imag
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpotifyInterceptor, multi: true },
+    DatePipe,
   ],
   bootstrap: [AppComponent],
 })
