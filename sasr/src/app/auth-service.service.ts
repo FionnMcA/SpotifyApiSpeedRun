@@ -111,8 +111,10 @@ export class AuthServiceService {
 
   private setSessionTokens(tokens: TokenResponse): void {
     const currentTime = Date.now();
-    const expirationDuration = tokens.expires_in * 1000;
-    const expirationTimestamp = currentTime + expirationDuration;
+    const defaultExpiresIn = 3600;
+    const expiresInSeconds =
+      tokens.expires_in > 0 ? tokens.expires_in : defaultExpiresIn;
+    const expirationTimestamp = currentTime + expiresInSeconds * 1000;
     sessionStorage.setItem('accessToken', tokens.access_token);
     sessionStorage.setItem('refreshToken', tokens.refresh_token);
     sessionStorage.setItem(
@@ -124,7 +126,7 @@ export class AuthServiceService {
         currentTime
       ).toLocaleString()} with expiration at ${new Date(
         expirationTimestamp
-      ).toLocaleString()}, expires in: ${tokens.expires_in} seconds`
+      ).toLocaleString()}, expires in: ${expiresInSeconds} seconds`
     );
   }
 
