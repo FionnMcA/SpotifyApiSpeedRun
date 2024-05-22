@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { switchMap, catchError, tap } from 'rxjs/operators';
+import { switchMap, catchError, tap, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -33,44 +33,33 @@ export class AuthServiceService {
     );
   }
 
-  getAccessToken(): Observable<string> {
+  getAccessToken(): Observable<string | null> {
+    const refreshToken = sessionStorage.getItem('refreshToken');
     const accessToken = sessionStorage.getItem('accessToken');
-    const isExpired = this.hasTokenExpired();
+    const expired = this.hasTokenExpired();
 
-    if (!isExpired && accessToken) {
+    if (!expired && accessToken) {
       return of(accessToken);
+    } else if (refreshToken) {
+      return this.handleTokenRefresh();
     } else {
-      return this.handleTokenRefresh().pipe(
-        switchMap(() => of(sessionStorage.getItem('accessToken'))),
-        catchError((error) => {
-          console.log('Error during refresh ', error);
-          // this.router.navigate(['/']);
-          return of(null);
-        })
-      );
+      // this.router.navigate(['/login']);
+      return of(null);
     }
   }
 
-  handleTokenRefresh(): Observable<any> {
+  handleTokenRefresh(): Observable<string | null> {
     const refreshToken = sessionStorage.getItem('refreshToken');
     if (!refreshToken) {
-      console.error('No refresh token available');
-      // this.router.navigate(['/']);
       return of(null);
     }
 
     return this.refreshAccessToken(refreshToken).pipe(
-      tap((data) => {
-        if (data.access_token && data.refresh_token) {
-          this.setSessionTokens(data);
-        } else {
-          console.error('Invalid token response:', data);
-          // this.router.navigate(['/']);
-        }
-      }),
+      tap((data) => this.setSessionTokens(data)),
+      map((data) => data.access_token),
       catchError((error) => {
         console.error('Error refreshing token:', error);
-        // this.router.navigate(['/']);
+        // this.router.navigate(['/login']);
         return of(null);
       })
     );
