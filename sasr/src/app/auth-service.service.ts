@@ -32,7 +32,7 @@ export class AuthServiceService {
       }
     );
   }
-  // AuthService
+
   getAccessToken(): Observable<string | null> {
     const accessToken = sessionStorage.getItem('accessToken');
     const refreshToken = sessionStorage.getItem('refreshToken');
@@ -48,7 +48,7 @@ export class AuthServiceService {
         }),
         catchError((error) => {
           console.error('Error during token refresh:', error);
-          this.router.navigate(['/login']);
+          this.router.navigate(['/']);
           return of(null);
         })
       );
