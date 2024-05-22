@@ -74,7 +74,6 @@ export class ResultsComponent implements OnInit {
   onCreatePlaylist() {
     const description = this.timePeriod;
     const name = `Your top tracks of ${this.timePeriod}`;
-    const accessToken = sessionStorage.getItem('accessToken');
     this.getProfile().subscribe({
       next: (userProfile) => {
         const userId = userProfile.id;
