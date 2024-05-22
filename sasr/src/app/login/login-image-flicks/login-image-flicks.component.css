@@ -1,0 +1,22 @@
+@media (min-width: 992px) {
+  img {
+    height: 635.25px;
+    width: 350px;
+    border-radius: 12.25px;
+  }
+}
+@media screen and (min-width: 479px) and (max-width: 991px) {
+  img {
+    height: 635.25px;
+    width: 350px;
+    border-radius: 12.25px;
+  }
+}
+
+@media (max-width: 478px) {
+  img {
+    height: 453.75px;
+    width: 250px;
+    border-radius: 9.375px;
+  }
+}

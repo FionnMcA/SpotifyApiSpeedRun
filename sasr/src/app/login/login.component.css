@@ -1,0 +1,33 @@
+.site-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+@media (min-width: 992px) {
+  .content-wrap {
+    padding-top: 80px;
+  }
+  .text {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 20px;
+  }
+  .images {
+    padding-left: 130px;
+  }
+}
+
+@media (max-width: 991px) {
+  .content-wrap {
+    height: auto;
+    padding-top: 30px;
+  }
+
+  .text,
+  .images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
