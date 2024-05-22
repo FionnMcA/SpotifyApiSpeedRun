@@ -1,4 +1,20 @@
-<p>results works!</p>
+<div *ngIf="loading">
+  <div class="loadingPage">
+    <div>
+      <p-progressSpinner
+        styleClass="w-4rem h-4rem"
+        strokeWidth="8"
+        fill="var(--surface-ground)"
+        animationDuration=".5s"
+      >
+      </p-progressSpinner>
+    </div>
+    <div>
+      <div>Loading card</div>
+    </div>
+  </div>
+</div>
+
 <button (click)="on4Weeks()">4 weeks</button>
 <button (click)="on6Months()">6 months</button>
 <button (click)="on1Year()">1 year</button>

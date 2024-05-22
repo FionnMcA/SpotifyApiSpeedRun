@@ -23,7 +23,7 @@ export class AuthServiceService {
     });
 
     return this.http.post(
-      `https://spotify-api-speed-run-9b86.vercel.app/refresh_token`,
+      `https://spotify-api-speed-run-9b86.vercel.app/api/refresh`,
       body.toString(),
       {
         headers: {
@@ -52,7 +52,7 @@ export class AuthServiceService {
     if (!refreshToken) {
       console.error('No refresh token available');
       this.router.navigate(['/']);
-      return of(null); // Return an Observable that emits `null`
+      return of(null);
     }
 
     return this.refreshAccessToken(refreshToken).pipe(
@@ -67,7 +67,7 @@ export class AuthServiceService {
       catchError((error) => {
         console.error('Error refreshing token:', error);
         this.router.navigate(['/']);
-        return of(null); // Handle error by returning an Observable that emits `null`
+        return of(null);
       })
     );
   }
@@ -99,7 +99,7 @@ export class AuthServiceService {
   hasTokenExpired(): boolean {
     const currentTime = Date.now();
     const expirationTimestamp = this.getExpirationTimestamp();
-    const bufferTime = 60000; // 1 minute buffer or adjust as needed
+    const bufferTime = 60000;
     const hasExpired = currentTime > expirationTimestamp - bufferTime;
     console.log(
       `Token expired: ${hasExpired}, Current time: ${currentTime}, Expiration time with buffer: ${

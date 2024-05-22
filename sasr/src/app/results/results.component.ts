@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { app } from '../../../server';
-import { response } from 'express';
 import { Observable } from 'rxjs';
-import { platform } from 'os';
 import { AuthServiceService } from '../auth-service.service';
 
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css'], // Changed to 'styleUrls' and is an array
+  styleUrls: ['./results.component.css'],
 })
 export class ResultsComponent implements OnInit {
   constructor(
@@ -22,8 +19,7 @@ export class ResultsComponent implements OnInit {
   tracks: any[] = [];
   artists: any[] = [];
   timePeriod = 'long_term';
-  user: any;
-  expirationTime = 3600 * 1000;
+  loading: boolean = true;
 
   ngOnInit(): void {
     this.authService.handleHash();
@@ -67,6 +63,7 @@ export class ResultsComponent implements OnInit {
         this.trackUris = data.items.map((item: any) => item.uri);
         console.log('Top Tracks:', data.items);
         this.tracks = data.items.slice(0, 5);
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error fetching top tracks:', error);

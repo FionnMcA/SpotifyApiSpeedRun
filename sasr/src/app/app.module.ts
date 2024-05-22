@@ -13,6 +13,10 @@ import { ResultsComponent } from './results/results.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ButtonModule } from 'primeng/button';
+import { CarouselModule } from 'primeng/carousel';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoginTextComponent } from './login/login-text/login-text.component';
 import { LoginImageFlicksComponent } from './login/login-image-flicks/login-image-flicks.component';
 @NgModule({
@@ -23,7 +27,16 @@ import { LoginImageFlicksComponent } from './login/login-image-flicks/login-imag
     LoginTextComponent,
     LoginImageFlicksComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule, ButtonModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    ButtonModule,
+    CarouselModule,
+    TabMenuModule,
+    BrowserAnimationsModule,
+    ProgressSpinnerModule,
+  ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpotifyInterceptor, multi: true },
   ],
