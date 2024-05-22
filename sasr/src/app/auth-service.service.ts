@@ -99,28 +99,35 @@ export class AuthServiceService {
   hasTokenExpired(): boolean {
     const currentTime = Date.now();
     const expirationTimestamp = this.getExpirationTimestamp();
-    console.log(`Current time: ${currentTime}`);
-    console.log(`Expiration time: ${expirationTimestamp}`);
-    const hasExpired = currentTime > expirationTimestamp;
-    console.log(`Token expired: ${hasExpired}`);
+    const bufferTime = 60000; // 1 minute buffer or adjust as needed
+    const hasExpired = currentTime > expirationTimestamp - bufferTime;
+    console.log(
+      `Token expired: ${hasExpired}, Current time: ${currentTime}, Expiration time with buffer: ${
+        expirationTimestamp - bufferTime
+      }`
+    );
     return hasExpired;
   }
 
   private setSessionTokens(tokens: TokenResponse): void {
     const currentTime = Date.now();
-    const expirationTime = currentTime + tokens.expires_in * 1000;
+    const expirationDuration = tokens.expires_in * 1000;
+    const expirationTimestamp = currentTime + expirationDuration;
     sessionStorage.setItem('accessToken', tokens.access_token);
     sessionStorage.setItem('refreshToken', tokens.refresh_token);
     sessionStorage.setItem(
       'spotifyAccessTokenExpirationTimestamp',
-      expirationTime.toString()
+      expirationTimestamp.toString()
     );
     console.log(
-      `Tokens set with expiration at ${new Date(
-        expirationTime
-      ).toLocaleString()}`
+      `Tokens set at ${new Date(
+        currentTime
+      ).toLocaleString()} with expiration at ${new Date(
+        expirationTimestamp
+      ).toLocaleString()}, expires in: ${tokens.expires_in} seconds`
     );
   }
+
   private parseFragment(fragment: string): TokenResponse {
     const params = new URLSearchParams(fragment);
     const access_token = params.get('access_token') || '';
