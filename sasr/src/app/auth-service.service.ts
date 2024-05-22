@@ -32,34 +32,47 @@ export class AuthServiceService {
       }
     );
   }
-
+  // AuthService
   getAccessToken(): Observable<string | null> {
-    const refreshToken = sessionStorage.getItem('refreshToken');
     const accessToken = sessionStorage.getItem('accessToken');
-    const expired = this.hasTokenExpired();
+    const refreshToken = sessionStorage.getItem('refreshToken');
+    const isExpired = this.hasTokenExpired();
 
-    if (!expired && accessToken) {
+    if (!isExpired && accessToken) {
       return of(accessToken);
     } else if (refreshToken) {
-      return this.handleTokenRefresh();
+      return this.handleTokenRefresh().pipe(
+        switchMap(() => {
+          const updatedToken = sessionStorage.getItem('accessToken');
+          return updatedToken ? of(updatedToken) : of(null);
+        }),
+        catchError((error) => {
+          console.error('Error during token refresh:', error);
+          this.router.navigate(['/login']);
+          return of(null);
+        })
+      );
     } else {
-      // this.router.navigate(['/login']);
+      console.error('No refresh token available');
+      this.router.navigate(['/']);
       return of(null);
     }
   }
 
-  handleTokenRefresh(): Observable<string | null> {
+  handleTokenRefresh(): Observable<any> {
     const refreshToken = sessionStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      return of(null);
-    }
-
     return this.refreshAccessToken(refreshToken).pipe(
-      tap((data) => this.setSessionTokens(data)),
-      map((data) => data.access_token),
+      tap((data) => {
+        if (data.access_token && data.refresh_token) {
+          this.setSessionTokens(data);
+        } else {
+          console.error('Invalid token data received:', data);
+          throw new Error('Invalid token data');
+        }
+      }),
       catchError((error) => {
-        console.error('Error refreshing token:', error);
-        // this.router.navigate(['/login']);
+        console.error('Failed to refresh token:', error);
+        this.router.navigate(['/']);
         return of(null);
       })
     );
@@ -104,22 +117,24 @@ export class AuthServiceService {
 
   private setSessionTokens(tokens: TokenResponse): void {
     const currentTime = Date.now();
-    const defaultExpiresIn = 3600;
-    const expiresInSeconds =
-      tokens.expires_in > 0 ? tokens.expires_in : defaultExpiresIn;
-    const expirationTimestamp = currentTime + expiresInSeconds * 1000;
+    const expiresInSeconds = tokens.expires_in > 0 ? tokens.expires_in : 3600; // default to one hour if expires_in is not valid
+    const expirationTimestamp = currentTime + expiresInSeconds * 1000; // converting seconds to milliseconds
+
+    console.log(`Current time: ${currentTime}`);
+    console.log(`Expires in (seconds): ${expiresInSeconds}`);
+    console.log(`Calculated expiration time: ${expirationTimestamp}`);
+
     sessionStorage.setItem('accessToken', tokens.access_token);
     sessionStorage.setItem('refreshToken', tokens.refresh_token);
     sessionStorage.setItem(
       'spotifyAccessTokenExpirationTimestamp',
       expirationTimestamp.toString()
     );
+
     console.log(
-      `Tokens set at ${new Date(
-        currentTime
-      ).toLocaleString()} with expiration at ${new Date(
+      `Access token and refresh token set. Expiration timestamp: ${new Date(
         expirationTimestamp
-      ).toLocaleString()}, expires in: ${expiresInSeconds} seconds`
+      ).toLocaleString()}`
     );
   }
 
