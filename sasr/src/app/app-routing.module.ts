@@ -9,9 +9,9 @@ const routes: Routes = [
   {
     path: 'results',
     component: ResultsComponent,
-    // canActivate: [AuthGuardService],
+    canActivate: [AuthGuardService],
   },
-  { path: '**', component: LoginComponent },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
