@@ -17,8 +17,19 @@ export class AuthServiceService {
   constructor(private http: HttpClient, private router: Router) {}
 
   refreshAccessToken(refreshToken: string): Observable<any> {
-    return this.http.get(
-      `https://spotify-api-speed-run-9b86.vercel.app/refresh_token?refresh_token=${refreshToken}`
+    const body = new URLSearchParams({
+      refresh_token: refreshToken,
+      grant_type: 'refresh_token',
+    });
+
+    return this.http.post(
+      `https://spotify-api-speed-run-9b86.vercel.app/refresh_token`,
+      body.toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
     );
   }
 
