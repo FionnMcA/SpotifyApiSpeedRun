@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { Observable, of } from 'rxjs'; // Import 'of' for Observable creation
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuthServiceService } from './auth-service.service';
 
 @Injectable({
@@ -15,16 +15,18 @@ export class AuthGuardService implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.authService.getAccessToken().pipe(
-      map((token) => {
+      switchMap((token) => {
+        console.log('Token received in Guard:', token);
         if (token) {
-          return true;
+          return of(true);
+        } else {
+          this.router.navigate(['/login']);
+          return of(false);
         }
-        this.router.navigate(['/login']);
-        return false;
       }),
       catchError((error) => {
         console.log('Error during token validation:', error);
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
         return of(false);
       })
     );
