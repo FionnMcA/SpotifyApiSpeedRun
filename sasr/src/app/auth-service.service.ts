@@ -99,26 +99,28 @@ export class AuthServiceService {
   hasTokenExpired(): boolean {
     const currentTime = Date.now();
     const expirationTimestamp = this.getExpirationTimestamp();
-    const fiveMinutesInMs = 300000; // 5 minutes buffer
-    const expired = currentTime + fiveMinutesInMs > expirationTimestamp;
-    console.log(`Token expired: ${expired}`);
-    return expired;
+    console.log(`Current time: ${currentTime}`);
+    console.log(`Expiration time: ${expirationTimestamp}`);
+    const hasExpired = currentTime > expirationTimestamp;
+    console.log(`Token expired: ${hasExpired}`);
+    return hasExpired;
   }
 
   private setSessionTokens(tokens: TokenResponse): void {
+    const currentTime = Date.now();
+    const expirationTime = currentTime + tokens.expires_in * 1000;
     sessionStorage.setItem('accessToken', tokens.access_token);
     sessionStorage.setItem('refreshToken', tokens.refresh_token);
-    const expirationTimestamp = Date.now() + tokens.expires_in * 1000;
     sessionStorage.setItem(
       'spotifyAccessTokenExpirationTimestamp',
-      expirationTimestamp.toString()
+      expirationTime.toString()
     );
     console.log(
-      'Access token and refresh token set. Expiration timestamp:',
-      expirationTimestamp
+      `Tokens set with expiration at ${new Date(
+        expirationTime
+      ).toLocaleString()}`
     );
   }
-
   private parseFragment(fragment: string): TokenResponse {
     const params = new URLSearchParams(fragment);
     const access_token = params.get('access_token') || '';
