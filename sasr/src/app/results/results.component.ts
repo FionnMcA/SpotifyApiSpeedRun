@@ -17,6 +17,7 @@ export class ResultsComponent implements OnInit {
   timePeriod = 'long_term';
   formattedDate: string;
   loading: boolean = true;
+  topArtistImg: string;
   items: MenuItem[] | undefined;
   activeItem: MenuItem | undefined;
   playlistUrl: string;
@@ -78,6 +79,7 @@ export class ResultsComponent implements OnInit {
 
     this.http.get(url, {}).subscribe({
       next: (data: any) => {
+        this.topArtistImg = data[0].images[0].url;
         this.artists = data.items.slice(0, 5);
       },
       error: (error) => {
