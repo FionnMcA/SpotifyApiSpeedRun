@@ -26,6 +26,7 @@ export class ResultsComponent implements OnInit {
   colours: string[] = ['green', 'red', 'blue', 'orange'];
   playlistString = 'Create Playlist';
   averageMins: number = 0;
+  topGenre: string;
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -83,6 +84,17 @@ export class ResultsComponent implements OnInit {
 
     this.http.get(url, {}).subscribe({
       next: (data: any) => {
+        let genreDict = {};
+        data.items.forEach((artist) => {
+          console.log(artist.genres);
+          genreDict = this.addToGenreDict(artist.genres, genreDict);
+        });
+        const sortedGenres = Object.entries(genreDict).sort(
+          (a: [string, number], b: [string, number]) => {
+            return b[1] - a[1];
+          }
+        );
+        this.topGenre = sortedGenres[0][0];
         this.topArtistImg = data.items[0].images[0].url;
         this.artists = data.items.slice(0, 5);
       },
@@ -90,6 +102,13 @@ export class ResultsComponent implements OnInit {
         console.log('error fetching top artists ', this.artists);
       },
     });
+  }
+
+  addToGenreDict(genres, genreDict) {
+    genres.forEach((genre) => {
+      genreDict[genre] = (genreDict[genre] || 0) + 1;
+    });
+    return genreDict;
   }
 
   getRecentlyPlayed(): void {
