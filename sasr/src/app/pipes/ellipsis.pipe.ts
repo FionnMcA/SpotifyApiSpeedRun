@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { max } from 'rxjs-compat/operator/max';
 
 @Pipe({
   name: 'ellipsis',
