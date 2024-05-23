@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthServiceService } from '../auth-service.service';
+import { AuthServiceService } from '../services/auth-service.service';
 import { MenuItem } from 'primeng/api';
 
 @Component({
