@@ -4,7 +4,7 @@ import {
   provideClientHydration,
 } from '@angular/platform-browser';
 
-import { SpotifyInterceptor } from './spotify-interceptor';
+import { SpotifyInterceptor } from './interceptors/spotify-interceptor';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
@@ -21,6 +21,9 @@ import { LoginTextComponent } from './login/login-text/login-text.component';
 import { LoginImageFlicksComponent } from './login/login-image-flicks/login-image-flicks.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { PanelModule } from 'primeng/panel';
+
+import { EllipsisPipe } from './pipes/ellipsis.pipe';
+import { CapitalizeFirstPipe } from './pipes/capitalize-first.pipe';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +31,8 @@ import { PanelModule } from 'primeng/panel';
     ResultsComponent,
     LoginTextComponent,
     LoginImageFlicksComponent,
+    EllipsisPipe,
+    CapitalizeFirstPipe,
   ],
   imports: [
     BrowserModule,
