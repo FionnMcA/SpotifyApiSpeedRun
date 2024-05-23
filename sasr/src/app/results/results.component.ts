@@ -97,9 +97,9 @@ export class ResultsComponent implements OnInit {
 
     this.http.get(url, {}).subscribe({
       next: (data: any) => {
-        const totalMins = this.getTotalMinutes(data);
+        const totalMins = this.getTotalMinutes(data.items);
         console.log('totalMins ' + totalMins);
-        const timeSpan = this.getSpan(data);
+        const timeSpan = this.getSpan(data.items);
         console.log('timespan ' + timeSpan);
         this.averageMins = Math.round(
           (totalMins / timeSpan) * this.timePeriodToInt(this.timePeriod)
