@@ -208,8 +208,12 @@ export class ResultsComponent implements OnInit {
 
   onCreatePlaylist() {
     if (this.playlistString === 'Create Playlist') {
-      const description = this.timePeriod;
-      const name = `Your top tracks of ${this.timePeriod}`;
+      const name = `Your Top Tracks Of The Last ${this.timePeriodToString(
+        this.timePeriod
+      )} 🎉`;
+      const description = `Your Top Tracks of The Last ${this.timePeriodToString(
+        this.timePeriod
+      )} As Of ${this.formattedDate}. Made By Wrappedify.com 🎉`;
       this.getProfile().subscribe({
         next: (userProfile) => {
           const userId = userProfile.id;
