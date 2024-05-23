@@ -67,6 +67,7 @@ export class ResultsComponent implements OnInit {
     this.authService.handleHash();
     this.getTopTracks();
     this.getTopArtists();
+    this.getRecentlyPlayed();
   }
 
   onChangeTimePeriod(timePeriod: string): void {
@@ -139,6 +140,9 @@ export class ResultsComponent implements OnInit {
 
       const timeSpan =
         (firstPlayed.getTime() - lastPlayed.getTime()) / (1000 * 60 * 60 * 24);
+      console.log('First Played:', firstPlayed);
+      console.log('Last Played:', lastPlayed);
+      console.log('Time Span:', timeSpan);
       return timeSpan;
     }
     return 0;
