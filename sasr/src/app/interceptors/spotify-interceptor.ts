@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { AuthServiceService } from './auth-service.service';
+import { AuthServiceService } from '../services/auth-service.service';
 
 @Injectable()
 export class SpotifyInterceptor implements HttpInterceptor {
