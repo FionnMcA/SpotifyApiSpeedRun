@@ -61,14 +61,14 @@
                         <td class="topArtistsDisplay">
                           <ul>
                             <li *ngFor="let artist of artists; let i = index">
-                              {{ i + 1 }} {{ artist.name || ellipsis }}
+                              {{ i + 1 }} {{ artist.name | ellipsis }}
                             </li>
                           </ul>
                         </td>
                         <td class="topArtistsDisplay">
                           <ul>
                             <li *ngFor="let track of tracks; let i = index">
-                              {{ i + 1 }} {{ track.name || ellipsis }}
+                              {{ i + 1 }} {{ track.name | ellipsis }}
                             </li>
                           </ul>
                         </td>
@@ -83,7 +83,7 @@
                       </tr>
                       <tr class="minutesAndGenre">
                         <td>{{ averageMins | number }}*</td>
-                        <td>{{ topGenre || capitalizeFirst }}</td>
+                        <td>{{ topGenre | capitalizeFirst }}</td>
                       </tr>
                     </table>
                     <div class="logoAndLink">WRAPPEDIFY.COM</div>
