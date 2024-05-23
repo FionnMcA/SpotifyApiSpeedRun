@@ -9,5 +9,6 @@ export class EllipsisPipe implements PipeTransform {
     if (value.length > max) {
       return value.substring(0, max) + '...';
     }
+    return value;
   }
 }

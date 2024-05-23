@@ -128,10 +128,14 @@ export class ResultsComponent implements OnInit {
           'time period to int  ' + this.timePeriodToInt(this.timePeriod)
         );
       },
+
       error: (error) => {
         console.log('error fetching recently played');
       },
     });
+    setTimeout(() => {
+      this.loading = false;
+    }, 250);
   }
 
   msToMins(milliseconds: number): number {
@@ -184,7 +188,6 @@ export class ResultsComponent implements OnInit {
         this.trackUris = data.items.map((item: any) => item.uri);
         console.log('Top Tracks:', data.items);
         this.tracks = data.items.slice(0, 5);
-        this.loading = false;
       },
       error: (error) => {
         console.error('Error fetching top tracks:', error);
