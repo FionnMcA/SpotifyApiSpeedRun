@@ -24,7 +24,7 @@ export class ResultsComponent implements OnInit {
   isClicked = false;
   colours: string[] = ['green', 'red', 'blue', 'orange'];
   playlistString = 'Create Playlist';
-  averageMins;
+  averageMins: number = 0;
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
