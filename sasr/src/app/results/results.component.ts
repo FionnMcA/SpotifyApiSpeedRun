@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthServiceService } from '../auth-service.service';
 import { MenuItem } from 'primeng/api';
+import { timestamp } from 'rxjs-compat/operator/timestamp';
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
@@ -95,9 +96,15 @@ export class ResultsComponent implements OnInit {
     this.http.get(url, {}).subscribe({
       next: (data: any) => {
         const totalMins = this.getTotalMinutes(data);
+        console.log('totalMins ' + totalMins);
         const timeSpan = this.getSpan(data);
+        console.log('timespan ' + timeSpan);
         this.averageMins = Math.round(
           (totalMins / timeSpan) * this.timePeriodToInt(this.timePeriod)
+        );
+        console.log('averageMins ' + this.averageMins);
+        console.log(
+          'time period to int  ' + this.timePeriodToInt(this.timePeriod)
         );
       },
       error: (error) => {
