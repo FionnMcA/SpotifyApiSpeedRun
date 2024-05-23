@@ -24,6 +24,7 @@ export class ResultsComponent implements OnInit {
   isClicked = false;
   colours: string[] = ['green', 'red', 'blue', 'orange'];
   playlistString = 'Create Playlist';
+  averageMins;
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -88,6 +89,53 @@ export class ResultsComponent implements OnInit {
     });
   }
 
+  getRecentlyPlayed(): void {
+    const url = `https://api.spotify.com/v1/me/player/recently-played?limit=50`;
+
+    this.http.get(url, {}).subscribe({
+      next: (data: any) => {
+        const totalMins = this.getTotalMinutes(data);
+        const timeSpan = this.getSpan(data);
+        this.averageMins = Math.round(
+          (totalMins / timeSpan) * this.timePeriodToInt(this.timePeriod)
+        );
+      },
+      error: (error) => {
+        console.log('error fetching recently played');
+      },
+    });
+  }
+
+  msToMins(milliseconds: number): number {
+    const minutes = Math.floor(milliseconds / 60000);
+    const seconds = (milliseconds % 60000) / 1000;
+    const totalMinutes = minutes + seconds / 60;
+
+    return totalMinutes;
+  }
+
+  getTotalMinutes(recentPlays: any[]): number {
+    const totalMins = recentPlays.reduce(
+      (total, track) => total + this.msToMins(track.track.duration_ms),
+      0
+    );
+    return totalMins;
+  }
+
+  getSpan(recentPlays: any[]): number {
+    if (recentPlays.length > 0) {
+      const firstPlayed = new Date(recentPlays[0].played_at);
+      const lastPlayed = new Date(
+        recentPlays[recentPlays.length - 1].played_at
+      );
+
+      const timeSpan =
+        (firstPlayed.getTime() - lastPlayed.getTime()) / (1000 * 60 * 60 * 24);
+      return timeSpan;
+    }
+    return 0;
+  }
+
   getTopTracks(): void {
     const url = `https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${this.timePeriod}`;
     this.http.get(url, {}).subscribe({
@@ -101,6 +149,17 @@ export class ResultsComponent implements OnInit {
         console.error('Error fetching top tracks:', error);
       },
     });
+  }
+
+  timePeriodToInt(timePeriod: string): number {
+    switch (timePeriod) {
+      case 'short_term':
+        return 28;
+      case 'medium_term':
+        return 182.5;
+      case 'long_term':
+        return 365;
+    }
   }
 
   onCreatePlaylist() {
