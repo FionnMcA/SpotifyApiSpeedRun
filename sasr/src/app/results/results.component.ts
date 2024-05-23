@@ -124,11 +124,21 @@ export class ResultsComponent implements OnInit {
   }
 
   getTotalMinutes(recentPlays: any[]): number {
-    const totalMins = recentPlays.reduce(
-      (total, track) => total + this.msToMins(track.track.duration_ms),
-      0
-    );
-    return totalMins;
+    if (!Array.isArray(recentPlays)) {
+      console.error(
+        'Expected an array for total minutes calculation, received:',
+        recentPlays
+      );
+      return 0;
+    }
+
+    return recentPlays.reduce((total, track) => {
+      const trackDuration =
+        track.track && track.track.duration_ms
+          ? this.msToMins(track.track.duration_ms)
+          : 0;
+      return total + trackDuration;
+    }, 0);
   }
 
   getSpan(recentPlays: any[]): number {
