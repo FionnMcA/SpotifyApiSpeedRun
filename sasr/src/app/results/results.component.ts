@@ -74,6 +74,7 @@ export class ResultsComponent implements OnInit {
     console.log('Time Period: ', this.timePeriod);
     this.getTopTracks();
     this.getTopArtists();
+    this.getRecentlyPlayed();
   }
 
   getTopArtists(): void {
