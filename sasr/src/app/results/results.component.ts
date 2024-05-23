@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthServiceService } from '../auth-service.service';
 import { MenuItem } from 'primeng/api';
-import { timestamp } from 'rxjs-compat/operator/timestamp';
+
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
