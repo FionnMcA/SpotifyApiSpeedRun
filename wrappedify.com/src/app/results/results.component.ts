@@ -27,6 +27,7 @@ export class ResultsComponent implements OnInit {
   playlistString = 'Create Playlist';
   averageMins: number = 0;
   topGenre: string;
+  playlistLoading: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -208,6 +209,7 @@ export class ResultsComponent implements OnInit {
 
   onCreatePlaylist() {
     if (this.playlistString === 'Create Playlist') {
+      this.playlistLoading = true;
       const name = `Your Top Tracks Of The Last ${this.timePeriodToString(
         this.timePeriod
       )} 🎉`;
@@ -224,6 +226,7 @@ export class ResultsComponent implements OnInit {
               this.isClicked = true;
               const playlistId = playlist.id;
               this.addTracksToPlaylist(playlistId, this.trackUris);
+              this.playlistLoading = false;
             },
             error: (error) => {
               console.error('Error creating playlist ', error);
