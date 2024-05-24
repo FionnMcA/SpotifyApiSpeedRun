@@ -10,6 +10,7 @@ export class LoginImageFlicksComponent implements OnInit, OnDestroy {
   private currentIndex = 0;
   private imageChangeInterval: any;
 
+  //array of sample wrappedify.com cards
   images = [
     '../assets/House.JPEG',
     '../assets/EDM.JPEG',
@@ -23,16 +24,20 @@ export class LoginImageFlicksComponent implements OnInit, OnDestroy {
     '../assets/Rap.JPEG',
   ];
 
+  //when the component is instantiated set the current image
+  //to the fist image in the array
   constructor(private cdr: ChangeDetectorRef) {
     this.currentImage = this.images[0];
   }
 
   private startImageRotation() {
+    //every second change to the next image
     this.imageChangeInterval = setInterval(() => {
       this.advanceImage();
     }, 1000);
   }
 
+  //made this function to ensure the transition between images is seamless
   private advanceImage() {
     this.currentIndex = (this.currentIndex + 1) % this.images.length;
     this.currentImage = this.images[this.currentIndex];
