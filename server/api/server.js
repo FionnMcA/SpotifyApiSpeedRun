@@ -76,9 +76,7 @@ app.get("/api/callback", (req, res) => {
           access_token: access_token,
           refresh_token: refresh_token,
         });
-        res.redirect(
-          `https://spotify-api-speed-run.vercel.app/results#${serializedTokens}`
-        );
+        res.redirect(`https://www.wrappedify.com/results#${serializedTokens}`);
       })
       .catch((error) => {
         console.error("Error fetching access token", error);
