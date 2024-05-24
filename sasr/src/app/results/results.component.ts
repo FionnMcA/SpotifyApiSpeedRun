@@ -38,15 +38,15 @@ export class ResultsComponent implements OnInit {
     console.log('FOrmatted date ' + this.formattedDate);
     this.items = [
       {
-        label: '4 weeks',
+        label: '4 Weeks',
         command: () => this.onChangeTimePeriod('short_term'),
       },
       {
-        label: '6 months',
+        label: '6 Months',
         command: () => this.onChangeTimePeriod('medium_term'),
       },
       {
-        label: 'All time',
+        label: 'Year',
         command: () => this.onChangeTimePeriod('long_term'),
       },
     ];
