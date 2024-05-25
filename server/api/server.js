@@ -86,29 +86,40 @@ app.get("/api/callback", (req, res) => {
 });
 
 app.get("/api/refresh", async (req, res) => {
-  const { refresh_token } = req.query;
-  const response = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization:
-        "Basic " +
-        Buffer.from(clientId + ":" + clientSecret).toString("base64"),
-    },
-    body: new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token: refresh_token,
-    }),
-  });
-  const data = await response.json();
-  if (response.ok) {
-    res.json({
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresIn: data.expires_in,
+  const { refresh_token } = req.body;
+
+  if (!refresh_token) {
+    return res.status(400).json({ error: "Missing refresh_token parameter" });
+  }
+
+  try {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization:
+          "Basic " +
+          Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: refresh_token,
+      }),
     });
-  } else {
-    res.status(500).json({ error: "Failed to refresh token" });
+
+    const data = await response.json();
+    if (response.ok) {
+      res.json({
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        expiresIn: data.expires_in,
+      });
+    } else {
+      res.status(500).json({ error: "Failed to refresh token" });
+    }
+  } catch (error) {
+    console.error("Error refreshing token: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

@@ -78,23 +78,6 @@ export class AuthServiceService {
     );
   }
 
-  handleHash() {
-    const hash = window.location.hash.substring(1);
-    if (hash) {
-      const tokens = this.parseFragment(hash);
-      if (tokens.access_token && tokens.refresh_token) {
-        this.setSessionTokens(tokens);
-      } else {
-        console.error('Invalid token fragments:', hash);
-      }
-      history.replaceState(
-        null,
-        null,
-        window.location.pathname + window.location.search
-      );
-    }
-  }
-
   getExpirationTimestamp(): number {
     const timestamp = sessionStorage.getItem(
       'spotifyAccessTokenExpirationTimestamp'
@@ -115,10 +98,35 @@ export class AuthServiceService {
     return hasExpired;
   }
 
+  handleHash() {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const tokens = this.parseFragment(hash);
+      if (tokens.access_token && tokens.refresh_token) {
+        this.setSessionTokens(tokens);
+      } else {
+        console.error('Invalid token fragments:', hash);
+      }
+      history.replaceState(
+        null,
+        null,
+        window.location.pathname + window.location.search
+      );
+    }
+  }
+
+  private parseFragment(fragment: string): TokenResponse {
+    const params = new URLSearchParams(fragment);
+    const access_token = params.get('access_token') || '';
+    const refresh_token = params.get('refresh_token') || '';
+    const expires_in = parseInt(params.get('expires_in') || '0', 10);
+    return { access_token, refresh_token, expires_in };
+  }
+
   private setSessionTokens(tokens: TokenResponse): void {
     const currentTime = Date.now();
-    const expiresInSeconds = tokens.expires_in > 0 ? tokens.expires_in : 3600; // default to one hour if expires_in is not valid
-    const expirationTimestamp = currentTime + expiresInSeconds * 1000; // converting seconds to milliseconds
+    const expiresInSeconds = tokens.expires_in > 0 ? tokens.expires_in : 3600;
+    const expirationTimestamp = currentTime + expiresInSeconds * 1000;
 
     console.log(`Current time: ${currentTime}`);
     console.log(`Expires in (seconds): ${expiresInSeconds}`);
@@ -136,13 +144,5 @@ export class AuthServiceService {
         expirationTimestamp
       ).toLocaleString()}`
     );
-  }
-
-  private parseFragment(fragment: string): TokenResponse {
-    const params = new URLSearchParams(fragment);
-    const access_token = params.get('access_token') || '';
-    const refresh_token = params.get('refresh_token') || '';
-    const expires_in = parseInt(params.get('expires_in') || '0', 10);
-    return { access_token, refresh_token, expires_in };
   }
 }
