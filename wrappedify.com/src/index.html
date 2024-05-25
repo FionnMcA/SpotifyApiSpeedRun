@@ -3,6 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <title>Wrappedify</title>
+    <meta
+      name="description"
+      content="Discover your Spotify Wrapped up of the last 4 Weeks, 6 Months and Year"
+    />
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
@@ -10,6 +14,19 @@
       rel="stylesheet"
       href="https://unpkg.com/primeflex@latest/primeflex.css"
     />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Wrappedify",
+        "description": "Discover your Spotify Wrapped up of the last 4 weeks, 6 months, and year",
+        "url": "https://wrappedify.com/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://spotify-api-speed-run-9b86.vercel.app/api/login"
+        }
+      }
+    </script>
   </head>
   <body>
     <app-root></app-root>
