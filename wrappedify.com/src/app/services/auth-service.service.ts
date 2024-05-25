@@ -24,15 +24,23 @@ export class AuthServiceService {
 
     console.log('Sending refresh token request with:', body.toString());
 
-    return this.http.post(
-      `https://spotify-api-speed-run-9b86.vercel.app/api/refresh`,
-      body.toString(),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
-    );
+    return this.http
+      .post<TokenResponse>(
+        `https://spotify-api-speed-run-9b86.vercel.app/api/refresh`,
+        body.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      )
+      .pipe(
+        tap((response) => console.log('Refresh token response:', response)),
+        catchError((error) => {
+          console.error('Error in refreshAccessToken:', error);
+          throw error;
+        })
+      );
   }
 
   getAccessToken(): Observable<string | null> {
@@ -40,12 +48,17 @@ export class AuthServiceService {
     const refreshToken = sessionStorage.getItem('refreshToken');
     const isExpired = this.hasTokenExpired();
 
+    console.log('DELETE WHEN FINISHED Access token:', accessToken);
+    console.log('Refresh token:', refreshToken);
+    console.log('Is token expired:', isExpired);
+
     if (!isExpired && accessToken) {
       return of(accessToken);
     } else if (refreshToken) {
       return this.handleTokenRefresh().pipe(
         switchMap(() => {
           const updatedToken = sessionStorage.getItem('accessToken');
+          console.log('Updated access token after refresh:', updatedToken);
           return updatedToken ? of(updatedToken) : of(null);
         }),
         catchError((error) => {
@@ -63,6 +76,12 @@ export class AuthServiceService {
 
   handleTokenRefresh(): Observable<any> {
     const refreshToken = sessionStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      console.error('No refresh token found in session storage');
+      this.router.navigate(['/']);
+      return of(null);
+    }
+
     return this.refreshAccessToken(refreshToken).pipe(
       tap((data) => {
         if (data.access_token && data.refresh_token) {
@@ -122,6 +141,7 @@ export class AuthServiceService {
     const access_token = params.get('access_token') || '';
     const refresh_token = params.get('refresh_token') || '';
     const expires_in = parseInt(params.get('expires_in') || '0', 10);
+
     return { access_token, refresh_token, expires_in };
   }
 
