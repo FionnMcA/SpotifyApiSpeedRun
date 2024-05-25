@@ -24,7 +24,7 @@
       <div class="md:col-6 col-12">
         <div class="content">
           <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
-          <div #carousel class="carousel-container">
+          <div *ngIf="!notEnoughListens" #carousel class="carousel-container">
             <p-carousel
               [value]="colours"
               [numVisible]="1.07"
