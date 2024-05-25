@@ -166,11 +166,11 @@ ul {
 
 @media (max-width: 992px) {
   .carousel-container {
-    width: 450px;
+    width: 475px;
     margin: auto;
   }
   ::ng-deep .p-panel .p-tabMenu {
-    width: 450px;
+    width: 475px;
     margin: auto;
   }
   .carousel-container {
