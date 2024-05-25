@@ -30,7 +30,6 @@ export class SpotifyInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(
           catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {
-              // If we get a 401 unauthorized response, attempt to refresh the token
               return this.authService.getAccessToken().pipe(
                 switchMap((newToken) => {
                   if (newToken) {
@@ -41,6 +40,7 @@ export class SpotifyInterceptor implements HttpInterceptor {
                     });
                     return next.handle(request);
                   } else {
+                    this.authService.logout();
                     return throwError(error);
                   }
                 })
