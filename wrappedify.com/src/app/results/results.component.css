@@ -281,6 +281,7 @@ ul {
     display: flex;
   }
   .minutesAndGenre {
+    font-weight: bold;
     height: 20.75px;
     font-size: 15px;
     width: 84px;
