@@ -22,6 +22,8 @@ export class AuthServiceService {
       grant_type: 'refresh_token',
     });
 
+    console.log('Sending refresh token request with:', body.toString());
+
     return this.http.post(
       `https://spotify-api-speed-run-9b86.vercel.app/api/refresh`,
       body.toString(),

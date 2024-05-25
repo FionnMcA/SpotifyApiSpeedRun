@@ -20,6 +20,7 @@ export class SpotifyInterceptor implements HttpInterceptor {
     return this.authService.getAccessToken().pipe(
       switchMap((token) => {
         if (token) {
+          console.log('Remove this soon. TOKEN: ' + token);
           request = request.clone({
             setHeaders: {
               Authorization: `Bearer ${token}`,
