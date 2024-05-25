@@ -32,6 +32,7 @@ export class ResultsComponent implements OnInit {
   loading: boolean = true;
   playlistString = 'Create Playlist';
   playlistLoading: boolean = false;
+  notEnoughListens: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -123,6 +124,12 @@ export class ResultsComponent implements OnInit {
         // - For each artist, call the addToGenreDict method
         //   and pass in the artist's genres and the dictionary as parameters,
         //   then assign the result to genreDict
+        if (data.items.length === 0) {
+          console.log('not enough time listening');
+          this.notEnoughListens = true;
+          console.log('not enough minutes listened ' + this.notEnoughListens);
+          return;
+        }
         let genreDict = {};
         data.items.forEach((artist) => {
           genreDict = this.addToGenreDict(artist.genres, genreDict);
