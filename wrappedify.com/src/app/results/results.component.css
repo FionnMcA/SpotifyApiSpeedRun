@@ -180,13 +180,11 @@ ul {
   .additional-space {
     height: 15.72px;
   }
-  button {
-    margin-right: 31.46px;
-    margin-left: 31.46px;
-  }
+
   .inline-element {
     display: inline-block;
   }
+
   .timePeriod {
     position: absolute;
     width: 211.2px;
