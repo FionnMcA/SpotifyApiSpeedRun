@@ -174,22 +174,22 @@ ul {
     margin: auto;
   }
   .carousel-container {
-    width: 365px;
+    width: 400px;
     margin: auto;
   }
   .additional-space {
-    height: 12.5px;
+    height: 14.29px;
   }
   button {
-    margin-right: 25px;
-    margin-left: 25px;
+    margin-right: 28.6px;
+    margin-left: 28.6px;
   }
   .inline-element {
     display: inline-block;
   }
   .timePeriod {
     position: absolute;
-    width: 168px;
+    width: 192px;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -202,29 +202,29 @@ ul {
     position: absolute;
     top: 0;
     left: 0;
-    width: 300px;
+    width: 342.86px;
     text-align: center;
   }
 
   body {
     font-family: "Roboto", sans-serif;
-    font-size: 9px;
+    font-size: 10.29px;
   }
   .fullCard {
-    margin-top: 50px;
+    margin-top: 57.14px;
     background-size: cover;
     background-position: center;
-    border-radius: 7.5px;
-    height: 363px;
-    width: 200px;
+    border-radius: 8.57px;
+    height: 414.86px;
+    width: 228.57px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 9px;
+    font-size: 10.29px;
   }
   .container {
-    height: 316px;
-    width: 168px;
+    height: 361.14px;
+    width: 192px;
   }
 
   .imgBox {
@@ -232,17 +232,17 @@ ul {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 142.75px;
-    width: 168px;
+    height: 163.14px;
+    width: 192px;
     position: relative;
   }
   .title {
-    height: 20px;
-    width: 168px;
+    height: 22.86px;
+    width: 192px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 9px;
+    font-size: 10.29px;
     position: absolute;
     top: 0;
     width: 100%;
@@ -251,39 +251,39 @@ ul {
   li {
     white-space: nowrap;
     overflow: hidden;
-    width: 84px;
+    width: 96px;
     margin: 0;
   }
   .imageCover {
-    height: 114px;
-    width: 114px;
+    height: 130.29px;
+    width: 130.29px;
   }
   .titles {
-    height: 12.5px;
+    height: 14.29px;
   }
   table {
-    margin-top: 20px;
-    width: 168px;
-    height: 120.75px;
+    margin-top: 22.86px;
+    width: 192px;
+    height: 138px;
     border-collapse: collapse;
   }
   .topArtistsDisplay {
-    height: 62.5px;
-    width: 84px;
+    height: 71.43px;
+    width: 96px;
     font-weight: bold;
   }
   .logoAndLink {
-    margin-top: 35px;
+    margin-top: 40px;
     font-weight: bold;
-    width: 252px;
-    height: 15px;
+    width: 288px;
+    height: 17.14px;
     text-align: center;
     display: flex;
   }
   .minutesAndGenre {
     font-weight: bold;
-    height: 20.75px;
-    font-size: 15px;
-    width: 84px;
+    height: 23.71px;
+    font-size: 17.14px;
+    width: 96px;
   }
 }
