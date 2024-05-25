@@ -14,6 +14,9 @@ interface TokenResponse {
   providedIn: 'root',
 })
 export class AuthServiceService {
+  private isRefreshingToken = false;
+  private accessTokenSubject: Observable<string | null>;
+
   constructor(private http: HttpClient, private router: Router) {}
 
   refreshAccessToken(refreshToken: string): Observable<any> {
@@ -55,24 +58,62 @@ export class AuthServiceService {
     if (!isExpired && accessToken) {
       return of(accessToken);
     } else if (refreshToken) {
-      return this.handleTokenRefresh().pipe(
-        switchMap(() => {
-          const updatedToken = sessionStorage.getItem('accessToken');
-          console.log('Updated access token after refresh:', updatedToken);
-          return updatedToken ? of(updatedToken) : of(null);
-        }),
-        catchError((error) => {
-          console.error('Error during token refresh:', error);
-          this.router.navigate(['/']);
-          return of(null);
-        })
-      );
+      if (!this.isRefreshingToken) {
+        this.isRefreshingToken = true;
+        this.accessTokenSubject = this.handleTokenRefresh().pipe(
+          tap(() => {
+            this.isRefreshingToken = false;
+          }),
+          switchMap(() => {
+            const updatedToken = sessionStorage.getItem('accessToken');
+            return updatedToken ? of(updatedToken) : of(null);
+          }),
+          catchError((error) => {
+            this.isRefreshingToken = false;
+            console.error('Error during token refresh:', error);
+            this.router.navigate(['/']);
+            return of(null);
+          })
+        );
+      }
+      return this.accessTokenSubject;
     } else {
-      console.error('No refresh token available');
+      console.error('No refresh token available or already refreshing');
       this.router.navigate(['/']);
       return of(null);
     }
   }
+
+  // getAccessToken(): Observable<string | null> {
+  //   const accessToken = sessionStorage.getItem('accessToken');
+  //   const refreshToken = sessionStorage.getItem('refreshToken');
+  //   const isExpired = this.hasTokenExpired();
+
+  //   console.log('DELETE WHEN FINISHED Access token:', accessToken);
+  //   console.log('Refresh token:', refreshToken);
+  //   console.log('Is token expired:', isExpired);
+
+  //   if (!isExpired && accessToken) {
+  //     return of(accessToken);
+  //   } else if (refreshToken) {
+  //     return this.handleTokenRefresh().pipe(
+  //       switchMap(() => {
+  //         const updatedToken = sessionStorage.getItem('accessToken');
+  //         console.log('Updated access token after refresh:', updatedToken);
+  //         return updatedToken ? of(updatedToken) : of(null);
+  //       }),
+  //       catchError((error) => {
+  //         console.error('Error during token refresh:', error);
+  //         this.router.navigate(['/']);
+  //         return of(null);
+  //       })
+  //     );
+  //   } else {
+  //     console.error('No refresh token available');
+  //     this.router.navigate(['/']);
+  //     return of(null);
+  //   }
+  // }
 
   handleTokenRefresh(): Observable<any> {
     const refreshToken = sessionStorage.getItem('refreshToken');
