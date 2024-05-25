@@ -200,7 +200,7 @@ export class ResultsComponent implements OnInit {
     });
     setTimeout(() => {
       this.loading = false;
-    }, 333);
+    }, 500);
   }
 
   msToMins(milliseconds: number): number {
