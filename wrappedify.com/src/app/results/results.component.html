@@ -133,11 +133,8 @@
             </div>
           </div>
 
-          <div class="theStar">
-            <p-panel
-              class="p-panel-header pi pi-check"
-              style="justify-content: center"
-            >
+          <div class="theStar" *ngIf="notEnoughListens">
+            <p-panel class="p-panel-header" header="LISTEN TO MORE MUSIC!">
               <p style="text-align: left">
                 It seems that you haven't heard enough music to calculate any
                 favorites from it. Try another time range or listen to some more
