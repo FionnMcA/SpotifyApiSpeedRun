@@ -24,6 +24,7 @@ import { PanelModule } from 'primeng/panel';
 
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
 import { CapitalizeFirstPipe } from './pipes/capitalize-first.pipe';
+import { FooterComponent } from './footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,6 +34,7 @@ import { CapitalizeFirstPipe } from './pipes/capitalize-first.pipe';
     LoginImageFlicksComponent,
     EllipsisPipe,
     CapitalizeFirstPipe,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,
